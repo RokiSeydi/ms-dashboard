@@ -1,22 +1,29 @@
 import React from "react";
-import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
-import Home from "./components/Home";
+import { PublicClientApplication } from "@azure/msal-browser";
+import { MsalProvider, AuthenticatedTemplate, UnauthenticatedTemplate } from "@azure/msal-react";
+import Dashboard from "./components/Dashboard";
 import Login from "./components/Login";
-import Calendar from "./components/Calendar";
-import Emails from "./components/Emails";
-import AIPrompt from "./components/AIPrompt";
+
+const msalConfig = {
+  auth: {
+    clientId: "af619383-16e3-483b-8f1b-e1c8ba4c8906",
+    authority: "https://login.microsoftonline.com/2b897507-ee8c-4575-830b-4f8267c3d307",
+    redirectUri: "http://localhost:3000",
+  },
+};
+
+const msalInstance = new PublicClientApplication(msalConfig);
 
 function App() {
   return (
-    <Router>
-      <Switch>
-        <Route path="/" exact component={Home} />
-        <Route path="/login" component={Login} />
-        <Route path="/calendar" component={Calendar} />
-        <Route path="/emails" component={Emails} />
-        <Route path="/ai-prompt" component={AIPrompt} />
-      </Switch>
-    </Router>
+    <MsalProvider instance={msalInstance}>
+      <AuthenticatedTemplate>
+        <Dashboard />
+      </AuthenticatedTemplate>
+      <UnauthenticatedTemplate>
+        <Login />
+      </UnauthenticatedTemplate>
+    </MsalProvider>
   );
 }
 
