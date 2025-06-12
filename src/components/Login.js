@@ -1,10 +1,158 @@
 import React from "react";
 import { useMsal } from "@azure/msal-react";
 import { motion } from "framer-motion";
-import { Shield, Users, Calendar, Mail, FileText, Zap, CheckCircle } from "lucide-react";
+import { 
+  Button, 
+  Card, 
+  CardHeader, 
+  CardPreview,
+  Text, 
+  Title1, 
+  Title2, 
+  Title3,
+  Body1,
+  Caption1,
+  makeStyles,
+  tokens,
+  Divider
+} from "@fluentui/react-components";
+import { 
+  Shield24Regular, 
+  Calendar24Regular, 
+  Mail24Regular, 
+  Document24Regular, 
+  Sparkle24Regular,
+  CheckmarkCircle24Regular
+} from "@fluentui/react-icons";
+
+const useStyles = makeStyles({
+  container: {
+    minHeight: "100vh",
+    display: "flex",
+    backgroundColor: tokens.colorNeutralBackground2,
+  },
+  leftPanel: {
+    display: "none",
+    "@media (min-width: 1024px)": {
+      display: "flex",
+      width: "50%",
+      background: `linear-gradient(135deg, ${tokens.colorBrandBackground} 0%, ${tokens.colorCompoundBrandBackground} 100%)`,
+      position: "relative",
+      overflow: "hidden",
+    }
+  },
+  leftContent: {
+    position: "relative",
+    zIndex: 10,
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "center",
+    padding: tokens.spacingHorizontalXXXL,
+    color: tokens.colorNeutralForegroundInverted,
+  },
+  logo: {
+    width: "64px",
+    height: "64px",
+    backgroundColor: "rgba(255, 255, 255, 0.2)",
+    borderRadius: tokens.borderRadiusMedium,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: tokens.spacingVerticalXL,
+  },
+  logoInner: {
+    width: "32px",
+    height: "32px",
+    backgroundColor: tokens.colorNeutralForegroundInverted,
+    borderRadius: tokens.borderRadiusSmall,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  logoIcon: {
+    width: "16px",
+    height: "16px",
+    backgroundColor: tokens.colorBrandBackground,
+    borderRadius: tokens.borderRadiusSmall,
+  },
+  rightPanel: {
+    flex: 1,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    padding: tokens.spacingHorizontalXL,
+  },
+  loginCard: {
+    width: "100%",
+    maxWidth: "400px",
+    padding: tokens.spacingHorizontalXXL,
+  },
+  mobileHeader: {
+    textAlign: "center",
+    marginBottom: tokens.spacingVerticalXXL,
+    "@media (min-width: 1024px)": {
+      display: "none",
+    }
+  },
+  mobileLogo: {
+    width: "64px",
+    height: "64px",
+    backgroundColor: tokens.colorBrandBackground,
+    borderRadius: tokens.borderRadiusMedium,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    margin: "0 auto",
+    marginBottom: tokens.spacingVerticalL,
+  },
+  featureList: {
+    display: "flex",
+    flexDirection: "column",
+    gap: tokens.spacingVerticalL,
+    marginBottom: tokens.spacingVerticalXXL,
+  },
+  feature: {
+    display: "flex",
+    alignItems: "flex-start",
+    gap: tokens.spacingHorizontalL,
+  },
+  featureIcon: {
+    width: "40px",
+    height: "40px",
+    backgroundColor: "rgba(255, 255, 255, 0.2)",
+    borderRadius: tokens.borderRadiusMedium,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    flexShrink: 0,
+  },
+  benefitsList: {
+    display: "flex",
+    flexDirection: "column",
+    gap: tokens.spacingVerticalM,
+    marginBottom: tokens.spacingVerticalXXL,
+  },
+  benefit: {
+    display: "flex",
+    alignItems: "center",
+    gap: tokens.spacingHorizontalM,
+  },
+  signInButton: {
+    width: "100%",
+    marginBottom: tokens.spacingVerticalL,
+  },
+  helpLinks: {
+    marginTop: tokens.spacingVerticalXL,
+    textAlign: "center",
+    display: "flex",
+    flexDirection: "column",
+    gap: tokens.spacingVerticalS,
+  }
+});
 
 function Login() {
   const { instance } = useMsal();
+  const styles = useStyles();
 
   const handleLogin = () => {
     instance
@@ -16,53 +164,52 @@ function Login() {
 
   const features = [
     {
-      icon: Mail,
+      icon: Mail24Regular,
       title: "Unified inbox",
       description: "See all your emails and messages in one place"
     },
     {
-      icon: Calendar,
+      icon: Calendar24Regular,
       title: "Smart scheduling",
       description: "AI-powered calendar management and meeting insights"
     },
     {
-      icon: FileText,
+      icon: Document24Regular,
       title: "Document hub",
       description: "Access and collaborate on all your files seamlessly"
     },
     {
-      icon: Zap,
+      icon: Sparkle24Regular,
       title: "Cross-app automation",
       description: "Perform actions across multiple apps with AI commands"
     }
   ];
 
   return (
-    <div className="min-h-screen flex" style={{ backgroundColor: 'var(--ms-gray-20)' }}>
+    <div className={styles.container}>
       {/* Left Panel - Branding */}
-      <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden" style={{ backgroundColor: 'var(--ms-blue)' }}>
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-600 to-purple-700"></div>
-        <div className="relative z-10 flex flex-col justify-center px-12 text-white">
+      <div className={styles.leftPanel}>
+        <div className={styles.leftContent}>
           <motion.div
             initial={{ opacity: 0, x: -50 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6 }}
           >
-            <div className="mb-8">
-              <div className="w-16 h-16 bg-white/20 rounded-sm flex items-center justify-center mb-6">
-                <div className="w-8 h-8 bg-white rounded-sm flex items-center justify-center">
-                  <div className="w-4 h-4 bg-blue-600 rounded-sm"></div>
-                </div>
+            <div className={styles.logo}>
+              <div className={styles.logoInner}>
+                <div className={styles.logoIcon}></div>
               </div>
-              <h1 className="ms-font-6xl font-light mb-4">
-                Microsoft 365
-              </h1>
-              <p className="ms-font-xl text-blue-100 mb-8">
-                Your intelligent workspace that brings together the apps and services you use every day.
-              </p>
             </div>
+            
+            <Title1 as="h1" style={{ marginBottom: tokens.spacingVerticalL, color: tokens.colorNeutralForegroundInverted }}>
+              Microsoft 365
+            </Title1>
+            
+            <Body1 style={{ marginBottom: tokens.spacingVerticalXXL, color: "rgba(255, 255, 255, 0.8)" }}>
+              Your intelligent workspace that brings together the apps and services you use every day.
+            </Body1>
 
-            <div className="space-y-6">
+            <div className={styles.featureList}>
               {features.map((feature, index) => {
                 const Icon = feature.icon;
                 return (
@@ -71,14 +218,18 @@ function Login() {
                     initial={{ opacity: 0, x: -30 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: 0.2 + index * 0.1 }}
-                    className="flex items-start space-x-4"
+                    className={styles.feature}
                   >
-                    <div className="w-10 h-10 bg-white/20 rounded-sm flex items-center justify-center flex-shrink-0">
-                      <Icon size={20} />
+                    <div className={styles.featureIcon}>
+                      <Icon />
                     </div>
                     <div>
-                      <h3 className="ms-font-lg font-medium mb-1">{feature.title}</h3>
-                      <p className="ms-font-sm text-blue-100">{feature.description}</p>
+                      <Text weight="semibold" style={{ color: tokens.colorNeutralForegroundInverted, display: "block", marginBottom: tokens.spacingVerticalXS }}>
+                        {feature.title}
+                      </Text>
+                      <Caption1 style={{ color: "rgba(255, 255, 255, 0.8)" }}>
+                        {feature.description}
+                      </Caption1>
                     </div>
                   </motion.div>
                 );
@@ -89,90 +240,81 @@ function Login() {
       </div>
 
       {/* Right Panel - Login */}
-      <div className="flex-1 flex items-center justify-center px-6 py-12">
+      <div className={styles.rightPanel}>
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="w-full max-w-md"
+          className={styles.loginCard}
         >
           {/* Mobile Logo */}
-          <div className="lg:hidden text-center mb-8">
-            <div className="w-16 h-16 mx-auto mb-4 rounded-sm flex items-center justify-center" style={{ backgroundColor: 'var(--ms-blue)' }}>
-              <div className="w-8 h-8 bg-white rounded-sm flex items-center justify-center">
-                <div className="w-4 h-4 rounded-sm" style={{ backgroundColor: 'var(--ms-blue)' }}></div>
+          <div className={styles.mobileHeader}>
+            <div className={styles.mobileLogo}>
+              <div className={styles.logoInner}>
+                <div className={styles.logoIcon}></div>
               </div>
             </div>
-            <h1 className="ms-font-4xl font-light" style={{ color: 'var(--ms-gray-130)' }}>
-              Microsoft 365
-            </h1>
+            <Title2>Microsoft 365</Title2>
           </div>
 
           {/* Sign In Card */}
-          <div className="bg-white rounded-sm shadow-depth-8 p-8" style={{ border: `1px solid var(--ms-gray-40)` }}>
-            <div className="text-center mb-8">
-              <h2 className="ms-font-3xl font-light mb-2" style={{ color: 'var(--ms-gray-130)' }}>
-                Sign in
-              </h2>
-              <p className="ms-font-base" style={{ color: 'var(--ms-gray-80)' }}>
-                to continue to Microsoft 365
-              </p>
-            </div>
+          <Card>
+            <CardHeader
+              header={
+                <div style={{ textAlign: "center", marginBottom: tokens.spacingVerticalXL }}>
+                  <Title2 style={{ marginBottom: tokens.spacingVerticalS }}>Sign in</Title2>
+                  <Body1>to continue to Microsoft 365</Body1>
+                </div>
+              }
+            />
 
             {/* Benefits */}
-            <div className="mb-8 space-y-3">
-              <div className="flex items-center space-x-3">
-                <CheckCircle size={16} style={{ color: 'var(--ms-green)' }} />
-                <span className="ms-font-sm" style={{ color: 'var(--ms-gray-90)' }}>
-                  Secure access to all your apps
-                </span>
+            <div className={styles.benefitsList}>
+              <div className={styles.benefit}>
+                <CheckmarkCircle24Regular color={tokens.colorPaletteGreenForeground1} />
+                <Caption1>Secure access to all your apps</Caption1>
               </div>
-              <div className="flex items-center space-x-3">
-                <CheckCircle size={16} style={{ color: 'var(--ms-green)' }} />
-                <span className="ms-font-sm" style={{ color: 'var(--ms-gray-90)' }}>
-                  Unified activity and notifications
-                </span>
+              <div className={styles.benefit}>
+                <CheckmarkCircle24Regular color={tokens.colorPaletteGreenForeground1} />
+                <Caption1>Unified activity and notifications</Caption1>
               </div>
-              <div className="flex items-center space-x-3">
-                <CheckCircle size={16} style={{ color: 'var(--ms-green)' }} />
-                <span className="ms-font-sm" style={{ color: 'var(--ms-gray-90)' }}>
-                  AI-powered cross-app commands
-                </span>
+              <div className={styles.benefit}>
+                <CheckmarkCircle24Regular color={tokens.colorPaletteGreenForeground1} />
+                <Caption1>AI-powered cross-app commands</Caption1>
               </div>
             </div>
 
             {/* Sign In Button */}
-            <motion.button
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
+            <Button
+              appearance="primary"
+              size="large"
+              className={styles.signInButton}
               onClick={handleLogin}
-              className="w-full py-3 px-6 rounded-sm ms-font-base font-medium text-white transition-all shadow-depth-4 hover:shadow-depth-8"
-              style={{ backgroundColor: 'var(--ms-blue)' }}
             >
               Sign in with Microsoft
-            </motion.button>
+            </Button>
 
-            <div className="mt-6 text-center">
-              <p className="ms-font-xs" style={{ color: 'var(--ms-gray-70)' }}>
-                By signing in, you agree to our{' '}
-                <a href="#" className="hover:underline" style={{ color: 'var(--ms-blue)' }}>
-                  Terms of Service
-                </a>{' '}
-                and{' '}
-                <a href="#" className="hover:underline" style={{ color: 'var(--ms-blue)' }}>
-                  Privacy Policy
-                </a>
-              </p>
-            </div>
-          </div>
+            <Divider />
+
+            <Caption1 style={{ textAlign: "center", color: tokens.colorNeutralForeground3 }}>
+              By signing in, you agree to our{' '}
+              <a href="#" style={{ color: tokens.colorBrandForeground1 }}>
+                Terms of Service
+              </a>{' '}
+              and{' '}
+              <a href="#" style={{ color: tokens.colorBrandForeground1 }}>
+                Privacy Policy
+              </a>
+            </Caption1>
+          </Card>
 
           {/* Help Links */}
-          <div className="mt-8 text-center space-y-2">
-            <a href="#" className="block ms-font-sm hover:underline" style={{ color: 'var(--ms-blue)' }}>
-              Can't access your account?
+          <div className={styles.helpLinks}>
+            <a href="#" style={{ color: tokens.colorBrandForeground1, textDecoration: "none" }}>
+              <Caption1>Can't access your account?</Caption1>
             </a>
-            <a href="#" className="block ms-font-sm hover:underline" style={{ color: 'var(--ms-blue)' }}>
-              Sign-in options
+            <a href="#" style={{ color: tokens.colorBrandForeground1, textDecoration: "none" }}>
+              <Caption1>Sign-in options</Caption1>
             </a>
           </div>
         </motion.div>

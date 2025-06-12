@@ -1,8 +1,118 @@
 import React from "react";
 import { motion } from "framer-motion";
-import { X, Plus, Settings, Palette, Bell, Shield, HelpCircle, User, Lock, Globe } from "lucide-react";
+import { 
+  Button,
+  Text,
+  Title2,
+  Title3,
+  Body1,
+  Caption1,
+  Switch,
+  Divider,
+  makeStyles,
+  tokens
+} from "@fluentui/react-components";
+import { 
+  Dismiss24Regular,
+  Add24Regular,
+  Settings24Regular,
+  Shield24Regular,
+  Person24Regular,
+  Lock24Regular,
+  Globe24Regular,
+  Alert24Regular,
+  QuestionCircle24Regular
+} from "@fluentui/react-icons";
+
+const useStyles = makeStyles({
+  sidebar: {
+    position: "fixed",
+    left: 0,
+    top: 0,
+    height: "100vh",
+    width: "320px",
+    backgroundColor: tokens.colorNeutralBackground1,
+    borderRight: `1px solid ${tokens.colorNeutralStroke2}`,
+    zIndex: 50,
+    overflowY: "auto",
+    display: "flex",
+    flexDirection: "column",
+  },
+  header: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+    padding: tokens.spacingHorizontalXL,
+    borderBottom: `1px solid ${tokens.colorNeutralStroke2}`,
+  },
+  section: {
+    padding: tokens.spacingHorizontalXL,
+    borderBottom: `1px solid ${tokens.colorNeutralStroke2}`,
+  },
+  sectionHeader: {
+    display: "flex",
+    alignItems: "center",
+    gap: tokens.spacingHorizontalS,
+    marginBottom: tokens.spacingVerticalL,
+  },
+  appList: {
+    display: "flex",
+    flexDirection: "column",
+    gap: tokens.spacingVerticalM,
+  },
+  appItem: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+    padding: tokens.spacingHorizontalM,
+    backgroundColor: tokens.colorNeutralBackground2,
+    borderRadius: tokens.borderRadiusMedium,
+  },
+  appInfo: {
+    display: "flex",
+    alignItems: "center",
+    gap: tokens.spacingHorizontalM,
+  },
+  statusDot: {
+    width: "8px",
+    height: "8px",
+    borderRadius: "50%",
+  },
+  preferences: {
+    display: "flex",
+    flexDirection: "column",
+    gap: tokens.spacingVerticalL,
+  },
+  preference: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  accountLinks: {
+    display: "flex",
+    flexDirection: "column",
+    gap: tokens.spacingVerticalM,
+  },
+  accountLink: {
+    display: "flex",
+    alignItems: "center",
+    gap: tokens.spacingHorizontalM,
+    padding: tokens.spacingHorizontalS,
+    borderRadius: tokens.borderRadiusSmall,
+    cursor: "pointer",
+    "&:hover": {
+      backgroundColor: tokens.colorNeutralBackground2,
+    }
+  },
+  helpLinks: {
+    display: "flex",
+    flexDirection: "column",
+    gap: tokens.spacingVerticalM,
+  }
+});
 
 function Sidebar({ connectedApps, setConnectedApps, onClose }) {
+  const styles = useStyles();
   const disconnectedApps = connectedApps.filter(app => !app.connected);
   
   const handleConnectApp = (appId) => {
@@ -27,51 +137,41 @@ function Sidebar({ connectedApps, setConnectedApps, onClose }) {
       animate={{ x: 0, opacity: 1 }}
       exit={{ x: -320, opacity: 0 }}
       transition={{ type: "spring", damping: 25, stiffness: 200 }}
-      className="fixed left-0 top-0 h-full w-80 bg-white shadow-depth-64 z-50 overflow-y-auto"
-      style={{ borderRight: `1px solid var(--ms-gray-40)` }}
+      className={styles.sidebar}
     >
       {/* Header */}
-      <div className="flex items-center justify-between p-6" style={{ borderBottom: `1px solid var(--ms-gray-30)` }}>
-        <h2 className="ms-font-2xl font-semibold" style={{ color: 'var(--ms-gray-130)' }}>
-          Settings
-        </h2>
-        <motion.button
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.9 }}
+      <div className={styles.header}>
+        <Title2>Settings</Title2>
+        <Button
+          appearance="subtle"
+          icon={<Dismiss24Regular />}
           onClick={onClose}
-          className="p-2 rounded-sm hover:bg-gray-100 transition-colors"
-        >
-          <X size={20} style={{ color: 'var(--ms-gray-80)' }} />
-        </motion.button>
+        />
       </div>
 
       {/* Connected Apps Section */}
-      <div className="p-6" style={{ borderBottom: `1px solid var(--ms-gray-30)` }}>
-        <h3 className="ms-font-lg font-medium mb-4 flex items-center" style={{ color: 'var(--ms-gray-130)' }}>
-          <Shield size={18} className="mr-2" style={{ color: 'var(--ms-green)' }} />
-          Connected Apps
-        </h3>
-        <div className="space-y-3">
+      <div className={styles.section}>
+        <div className={styles.sectionHeader}>
+          <Shield24Regular color={tokens.colorPaletteGreenForeground1} />
+          <Title3>Connected Apps</Title3>
+        </div>
+        <div className={styles.appList}>
           {connectedApps.filter(app => app.connected).map(app => (
-            <div key={app.id} className="flex items-center justify-between p-3 rounded-sm" style={{ backgroundColor: 'var(--ms-gray-20)' }}>
-              <div className="flex items-center space-x-3">
-                <div className="w-2 h-2 rounded-full" style={{ backgroundColor: 'var(--ms-green)' }}></div>
-                <span className="ms-font-sm font-medium" style={{ color: 'var(--ms-gray-110)' }}>
-                  {app.name}
-                </span>
+            <div key={app.id} className={styles.appItem}>
+              <div className={styles.appInfo}>
+                <div 
+                  className={styles.statusDot}
+                  style={{ backgroundColor: tokens.colorPaletteGreenForeground1 }}
+                />
+                <Text weight="medium">{app.name}</Text>
               </div>
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
+              <Button
+                appearance="subtle"
+                size="small"
                 onClick={() => handleDisconnectApp(app.id)}
-                className="ms-font-xs px-3 py-1 rounded-sm transition-colors"
-                style={{ 
-                  backgroundColor: 'var(--ms-red)',
-                  color: 'white'
-                }}
               >
                 Disconnect
-              </motion.button>
+              </Button>
             </div>
           ))}
         </div>
@@ -79,32 +179,28 @@ function Sidebar({ connectedApps, setConnectedApps, onClose }) {
 
       {/* Available Apps Section */}
       {disconnectedApps.length > 0 && (
-        <div className="p-6" style={{ borderBottom: `1px solid var(--ms-gray-30)` }}>
-          <h3 className="ms-font-lg font-medium mb-4 flex items-center" style={{ color: 'var(--ms-gray-130)' }}>
-            <Plus size={18} className="mr-2" style={{ color: 'var(--ms-blue)' }} />
-            Available Apps
-          </h3>
-          <div className="space-y-3">
+        <div className={styles.section}>
+          <div className={styles.sectionHeader}>
+            <Add24Regular color={tokens.colorBrandForeground1} />
+            <Title3>Available Apps</Title3>
+          </div>
+          <div className={styles.appList}>
             {disconnectedApps.map(app => (
-              <div key={app.id} className="flex items-center justify-between p-3 rounded-sm" style={{ backgroundColor: 'var(--ms-gray-20)' }}>
-                <div className="flex items-center space-x-3">
-                  <div className="w-2 h-2 rounded-full" style={{ backgroundColor: 'var(--ms-gray-60)' }}></div>
-                  <span className="ms-font-sm font-medium" style={{ color: 'var(--ms-gray-110)' }}>
-                    {app.name}
-                  </span>
+              <div key={app.id} className={styles.appItem}>
+                <div className={styles.appInfo}>
+                  <div 
+                    className={styles.statusDot}
+                    style={{ backgroundColor: tokens.colorNeutralForeground3 }}
+                  />
+                  <Text weight="medium">{app.name}</Text>
                 </div>
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
+                <Button
+                  appearance="primary"
+                  size="small"
                   onClick={() => handleConnectApp(app.id)}
-                  className="ms-font-xs px-3 py-1 rounded-sm transition-colors"
-                  style={{ 
-                    backgroundColor: 'var(--ms-blue)',
-                    color: 'white'
-                  }}
                 >
                   Connect
-                </motion.button>
+                </Button>
               </div>
             ))}
           </div>
@@ -112,74 +208,68 @@ function Sidebar({ connectedApps, setConnectedApps, onClose }) {
       )}
 
       {/* Preferences Section */}
-      <div className="p-6" style={{ borderBottom: `1px solid var(--ms-gray-30)` }}>
-        <h3 className="ms-font-lg font-medium mb-4 flex items-center" style={{ color: 'var(--ms-gray-130)' }}>
-          <Settings size={18} className="mr-2" style={{ color: 'var(--ms-gray-80)' }} />
-          Preferences
-        </h3>
-        <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <span className="ms-font-sm" style={{ color: 'var(--ms-gray-110)' }}>Notifications</span>
-            <div className="w-10 h-6 rounded-full relative cursor-pointer" style={{ backgroundColor: 'var(--ms-blue)' }}>
-              <div className="w-4 h-4 bg-white rounded-full absolute top-1 right-1 transition-transform shadow-depth-4"></div>
-            </div>
+      <div className={styles.section}>
+        <div className={styles.sectionHeader}>
+          <Settings24Regular />
+          <Title3>Preferences</Title3>
+        </div>
+        <div className={styles.preferences}>
+          <div className={styles.preference}>
+            <Body1>Notifications</Body1>
+            <Switch defaultChecked />
           </div>
-          <div className="flex items-center justify-between">
-            <span className="ms-font-sm" style={{ color: 'var(--ms-gray-110)' }}>Auto-refresh</span>
-            <div className="w-10 h-6 rounded-full relative cursor-pointer" style={{ backgroundColor: 'var(--ms-blue)' }}>
-              <div className="w-4 h-4 bg-white rounded-full absolute top-1 right-1 transition-transform shadow-depth-4"></div>
-            </div>
+          <div className={styles.preference}>
+            <Body1>Auto-refresh</Body1>
+            <Switch defaultChecked />
           </div>
-          <div className="flex items-center justify-between">
-            <span className="ms-font-sm" style={{ color: 'var(--ms-gray-110)' }}>Compact view</span>
-            <div className="w-10 h-6 rounded-full relative cursor-pointer" style={{ backgroundColor: 'var(--ms-gray-50)' }}>
-              <div className="w-4 h-4 bg-white rounded-full absolute top-1 left-1 transition-transform shadow-depth-4"></div>
-            </div>
+          <div className={styles.preference}>
+            <Body1>Compact view</Body1>
+            <Switch />
           </div>
         </div>
       </div>
 
       {/* Account Section */}
-      <div className="p-6" style={{ borderBottom: `1px solid var(--ms-gray-30)` }}>
-        <h3 className="ms-font-lg font-medium mb-4 flex items-center" style={{ color: 'var(--ms-gray-130)' }}>
-          <User size={18} className="mr-2" style={{ color: 'var(--ms-gray-80)' }} />
-          Account
-        </h3>
-        <div className="space-y-3">
-          <button className="w-full text-left ms-font-sm p-2 rounded-sm hover:bg-gray-50 transition-colors flex items-center" style={{ color: 'var(--ms-gray-110)' }}>
-            <Lock size={16} className="mr-3" style={{ color: 'var(--ms-gray-70)' }} />
-            Privacy & Security
-          </button>
-          <button className="w-full text-left ms-font-sm p-2 rounded-sm hover:bg-gray-50 transition-colors flex items-center" style={{ color: 'var(--ms-gray-110)' }}>
-            <Globe size={16} className="mr-3" style={{ color: 'var(--ms-gray-70)' }} />
-            Language & Region
-          </button>
-          <button className="w-full text-left ms-font-sm p-2 rounded-sm hover:bg-gray-50 transition-colors flex items-center" style={{ color: 'var(--ms-gray-110)' }}>
-            <Bell size={16} className="mr-3" style={{ color: 'var(--ms-gray-70)' }} />
-            Notification Settings
-          </button>
+      <div className={styles.section}>
+        <div className={styles.sectionHeader}>
+          <Person24Regular />
+          <Title3>Account</Title3>
+        </div>
+        <div className={styles.accountLinks}>
+          <div className={styles.accountLink}>
+            <Lock24Regular color={tokens.colorNeutralForeground3} />
+            <Body1>Privacy & Security</Body1>
+          </div>
+          <div className={styles.accountLink}>
+            <Globe24Regular color={tokens.colorNeutralForeground3} />
+            <Body1>Language & Region</Body1>
+          </div>
+          <div className={styles.accountLink}>
+            <Alert24Regular color={tokens.colorNeutralForeground3} />
+            <Body1>Notification Settings</Body1>
+          </div>
         </div>
       </div>
 
       {/* Help Section */}
-      <div className="p-6">
-        <h3 className="ms-font-lg font-medium mb-4 flex items-center" style={{ color: 'var(--ms-gray-130)' }}>
-          <HelpCircle size={18} className="mr-2" style={{ color: 'var(--ms-gray-80)' }} />
-          Help & Support
-        </h3>
-        <div className="space-y-3">
-          <button className="w-full text-left ms-font-sm hover:underline transition-colors" style={{ color: 'var(--ms-blue)' }}>
+      <div className={styles.section}>
+        <div className={styles.sectionHeader}>
+          <QuestionCircle24Regular />
+          <Title3>Help & Support</Title3>
+        </div>
+        <div className={styles.helpLinks}>
+          <Button appearance="subtle" style={{ justifyContent: "flex-start" }}>
             Getting Started Guide
-          </button>
-          <button className="w-full text-left ms-font-sm hover:underline transition-colors" style={{ color: 'var(--ms-blue)' }}>
+          </Button>
+          <Button appearance="subtle" style={{ justifyContent: "flex-start" }}>
             Keyboard Shortcuts
-          </button>
-          <button className="w-full text-left ms-font-sm hover:underline transition-colors" style={{ color: 'var(--ms-blue)' }}>
+          </Button>
+          <Button appearance="subtle" style={{ justifyContent: "flex-start" }}>
             Contact Support
-          </button>
-          <button className="w-full text-left ms-font-sm hover:underline transition-colors" style={{ color: 'var(--ms-blue)' }}>
+          </Button>
+          <Button appearance="subtle" style={{ justifyContent: "flex-start" }}>
             What's New
-          </button>
+          </Button>
         </div>
       </div>
     </motion.div>

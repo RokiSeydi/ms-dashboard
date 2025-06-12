@@ -1,6 +1,7 @@
 import React from "react";
 import { PublicClientApplication } from "@azure/msal-browser";
 import { MsalProvider, AuthenticatedTemplate, UnauthenticatedTemplate } from "@azure/msal-react";
+import { FluentProvider, webLightTheme } from "@fluentui/react-components";
 import Dashboard from "./components/Dashboard";
 import Login from "./components/Login";
 
@@ -16,14 +17,16 @@ const msalInstance = new PublicClientApplication(msalConfig);
 
 function App() {
   return (
-    <MsalProvider instance={msalInstance}>
-      <AuthenticatedTemplate>
-        <Dashboard />
-      </AuthenticatedTemplate>
-      <UnauthenticatedTemplate>
-        <Login />
-      </UnauthenticatedTemplate>
-    </MsalProvider>
+    <FluentProvider theme={webLightTheme}>
+      <MsalProvider instance={msalInstance}>
+        <AuthenticatedTemplate>
+          <Dashboard />
+        </AuthenticatedTemplate>
+        <UnauthenticatedTemplate>
+          <Login />
+        </UnauthenticatedTemplate>
+      </MsalProvider>
+    </FluentProvider>
   );
 }
 

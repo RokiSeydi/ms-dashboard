@@ -1,14 +1,117 @@
 import React, { useState, useEffect } from "react";
 import { useMsal } from "@azure/msal-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Settings, Activity, Zap, Grid3X3, List, Search, Bell } from "lucide-react";
+import { 
+  Button,
+  Input,
+  Text,
+  Title1,
+  Title2,
+  Title3,
+  Body1,
+  Caption1,
+  makeStyles,
+  tokens,
+  Badge,
+  Avatar,
+  Toolbar,
+  ToolbarButton,
+  SearchBox,
+  Divider
+} from "@fluentui/react-components";
+import { 
+  Settings24Regular,
+  Activity24Regular,
+  Sparkle24Regular,
+  Grid324Regular,
+  List24Regular,
+  Search24Regular,
+  Alert24Regular,
+  Person24Regular
+} from "@fluentui/react-icons";
 import AppGrid from "./AppGrid";
 import Sidebar from "./Sidebar";
 import ActivityPanel from "./ActivityPanel";
 import AIPrompt from "./AIPrompt";
 
+const useStyles = makeStyles({
+  container: {
+    minHeight: "100vh",
+    backgroundColor: tokens.colorNeutralBackground2,
+  },
+  header: {
+    backgroundColor: tokens.colorNeutralBackground1,
+    borderBottom: `1px solid ${tokens.colorNeutralStroke2}`,
+    backdropFilter: "blur(20px)",
+  },
+  headerContent: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+    maxWidth: "1400px",
+    margin: "0 auto",
+    padding: `${tokens.spacingVerticalL} ${tokens.spacingHorizontalXL}`,
+    gap: tokens.spacingHorizontalL,
+  },
+  headerLeft: {
+    display: "flex",
+    alignItems: "center",
+    gap: tokens.spacingHorizontalL,
+  },
+  headerCenter: {
+    flex: 1,
+    maxWidth: "400px",
+  },
+  headerRight: {
+    display: "flex",
+    alignItems: "center",
+    gap: tokens.spacingHorizontalM,
+  },
+  main: {
+    padding: tokens.spacingHorizontalXL,
+  },
+  mainContent: {
+    maxWidth: "1400px",
+    margin: "0 auto",
+  },
+  welcomeSection: {
+    marginBottom: tokens.spacingVerticalXXL,
+  },
+  welcomeHeader: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginBottom: tokens.spacingVerticalL,
+    flexWrap: "wrap",
+    gap: tokens.spacingVerticalL,
+  },
+  statsContainer: {
+    display: "flex",
+    gap: tokens.spacingHorizontalXL,
+    flexWrap: "wrap",
+  },
+  stat: {
+    textAlign: "center",
+  },
+  aiButton: {
+    position: "fixed",
+    bottom: tokens.spacingVerticalXL,
+    right: tokens.spacingHorizontalXL,
+    width: "56px",
+    height: "56px",
+    borderRadius: "50%",
+    zIndex: 1000,
+  },
+  notificationBadge: {
+    position: "absolute",
+    top: "-4px",
+    right: "-4px",
+  }
+});
+
 function Dashboard() {
   const { accounts } = useMsal();
+  const styles = useStyles();
   const [showSidebar, setShowSidebar] = useState(false);
   const [showActivity, setShowActivity] = useState(false);
   const [showAI, setShowAI] = useState(false);
@@ -27,91 +130,68 @@ function Dashboard() {
   const user = accounts[0];
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: 'var(--ms-gray-20)' }}>
+    <div className={styles.container}>
       {/* Header */}
       <motion.header 
         initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        className="ms-acrylic border-b"
-        style={{ borderColor: 'var(--ms-gray-40)' }}
+        className={styles.header}
       >
-        <div className="flex items-center justify-between max-w-7xl mx-auto px-6 py-4">
-          <div className="flex items-center space-x-4">
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
+        <div className={styles.headerContent}>
+          <div className={styles.headerLeft}>
+            <ToolbarButton
+              appearance="subtle"
+              icon={<Settings24Regular />}
               onClick={() => setShowSidebar(!showSidebar)}
-              className="p-2 rounded-sm hover:bg-white/50 transition-colors"
-              style={{ color: 'var(--ms-gray-110)' }}
-            >
-              <Settings size={20} />
-            </motion.button>
+            />
             <div>
-              <h1 className="ms-font-4xl font-semibold" style={{ color: 'var(--ms-gray-130)' }}>
-                Microsoft 365
-              </h1>
-              <p className="ms-font-sm" style={{ color: 'var(--ms-gray-90)' }}>
-                Welcome back, {user?.name}
-              </p>
+              <Title1>Microsoft 365</Title1>
+              <Caption1>Welcome back, {user?.name}</Caption1>
             </div>
           </div>
           
           {/* Search Bar */}
-          <div className="flex-1 max-w-md mx-8">
-            <div className="relative">
-              <Search 
-                size={16} 
-                className="absolute left-3 top-1/2 transform -translate-y-1/2"
-                style={{ color: 'var(--ms-gray-80)' }}
-              />
-              <input
-                type="text"
-                placeholder="Search across your apps..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border rounded-sm focus:outline-none focus:ring-2 ms-font-sm"
-                style={{ 
-                  borderColor: 'var(--ms-gray-60)',
-                  backgroundColor: 'white',
-                  color: 'var(--ms-gray-110)'
-                }}
-              />
-            </div>
+          <div className={styles.headerCenter}>
+            <SearchBox
+              placeholder="Search across your apps..."
+              value={searchQuery}
+              onChange={(e, data) => setSearchQuery(data.value)}
+              size="large"
+            />
           </div>
           
-          <div className="flex items-center space-x-3">
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="p-2 rounded-sm hover:bg-white/50 transition-colors relative"
-              style={{ color: 'var(--ms-gray-110)' }}
-            >
-              <Bell size={20} />
-              <span className="absolute -top-1 -right-1 w-3 h-3 rounded-full text-xs flex items-center justify-center text-white"
-                    style={{ backgroundColor: 'var(--ms-red)', fontSize: '10px' }}>
+          <div className={styles.headerRight}>
+            <div style={{ position: "relative" }}>
+              <ToolbarButton
+                appearance="subtle"
+                icon={<Alert24Regular />}
+              />
+              <Badge 
+                appearance="filled" 
+                color="danger" 
+                size="small"
+                className={styles.notificationBadge}
+              >
                 3
-              </span>
-            </motion.button>
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => setShowActivity(!showActivity)}
-              className="p-2 rounded-sm hover:bg-white/50 transition-colors"
-              style={{ color: 'var(--ms-gray-110)' }}
-            >
-              <Activity size={20} />
-            </motion.button>
-            <div 
-              className="w-8 h-8 rounded-full flex items-center justify-center text-white ms-font-sm font-medium"
-              style={{ backgroundColor: 'var(--ms-blue)' }}
-            >
-              {user?.name?.charAt(0)}
+              </Badge>
             </div>
+            
+            <ToolbarButton
+              appearance="subtle"
+              icon={<Activity24Regular />}
+              onClick={() => setShowActivity(!showActivity)}
+            />
+            
+            <Avatar
+              name={user?.name}
+              size={32}
+              color="brand"
+            />
           </div>
         </div>
       </motion.header>
 
-      <div className="flex">
+      <div style={{ display: "flex" }}>
         {/* Left Sidebar */}
         <AnimatePresence>
           {showSidebar && (
@@ -124,50 +204,44 @@ function Dashboard() {
         </AnimatePresence>
 
         {/* Main Content */}
-        <main className="flex-1 p-6">
-          <div className="max-w-7xl mx-auto">
+        <main className={styles.main} style={{ flex: 1 }}>
+          <div className={styles.mainContent}>
             {/* Welcome Section */}
             <motion.div
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ delay: 0.1 }}
-              className="mb-8"
+              className={styles.welcomeSection}
             >
-              <div className="flex items-center justify-between mb-4">
+              <div className={styles.welcomeHeader}>
                 <div>
-                  <h2 className="ms-font-3xl font-semibold mb-2" style={{ color: 'var(--ms-gray-130)' }}>
+                  <Title2 style={{ marginBottom: tokens.spacingVerticalS }}>
                     Your apps
-                  </h2>
-                  <p className="ms-font-base" style={{ color: 'var(--ms-gray-90)' }}>
+                  </Title2>
+                  <Body1>
                     Access and manage your Microsoft 365 applications
-                  </p>
+                  </Body1>
                 </div>
                 
                 {/* Quick Stats */}
-                <div className="flex space-x-6">
-                  <div className="text-center">
-                    <div className="ms-font-2xl font-semibold" style={{ color: 'var(--ms-blue)' }}>
+                <div className={styles.statsContainer}>
+                  <div className={styles.stat}>
+                    <Title2 style={{ color: tokens.colorBrandForeground1 }}>
                       {connectedApps.filter(app => app.connected).length}
-                    </div>
-                    <div className="ms-font-xs" style={{ color: 'var(--ms-gray-80)' }}>
-                      Connected
-                    </div>
+                    </Title2>
+                    <Caption1>Connected</Caption1>
                   </div>
-                  <div className="text-center">
-                    <div className="ms-font-2xl font-semibold" style={{ color: 'var(--ms-green)' }}>
+                  <div className={styles.stat}>
+                    <Title2 style={{ color: tokens.colorPaletteGreenForeground1 }}>
                       12
-                    </div>
-                    <div className="ms-font-xs" style={{ color: 'var(--ms-gray-80)' }}>
-                      Active today
-                    </div>
+                    </Title2>
+                    <Caption1>Active today</Caption1>
                   </div>
-                  <div className="text-center">
-                    <div className="ms-font-2xl font-semibold" style={{ color: 'var(--ms-orange)' }}>
+                  <div className={styles.stat}>
+                    <Title2 style={{ color: tokens.colorPaletteOrangeForeground1 }}>
                       5
-                    </div>
-                    <div className="ms-font-xs" style={{ color: 'var(--ms-gray-80)' }}>
-                      Notifications
-                    </div>
+                    </Title2>
+                    <Caption1>Notifications</Caption1>
                   </div>
                 </div>
               </div>
@@ -186,18 +260,20 @@ function Dashboard() {
       </div>
 
       {/* AI Assistant Floating Button */}
-      <motion.button
+      <motion.div
         initial={{ scale: 0 }}
         animate={{ scale: 1 }}
         transition={{ delay: 0.5, type: "spring" }}
-        whileHover={{ scale: 1.1 }}
-        whileTap={{ scale: 0.9 }}
-        onClick={() => setShowAI(true)}
-        className="fixed bottom-6 right-6 w-14 h-14 rounded-full shadow-depth-16 flex items-center justify-center text-white hover:shadow-depth-64 transition-all"
-        style={{ backgroundColor: 'var(--ms-purple)' }}
       >
-        <Zap size={24} />
-      </motion.button>
+        <Button
+          appearance="primary"
+          shape="circular"
+          size="large"
+          icon={<Sparkle24Regular />}
+          className={styles.aiButton}
+          onClick={() => setShowAI(true)}
+        />
+      </motion.div>
 
       {/* AI Prompt Modal */}
       <AnimatePresence>

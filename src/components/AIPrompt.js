@@ -1,6 +1,185 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Send, Sparkles, Zap, MessageSquare, Lightbulb, Bot, User } from "lucide-react";
+import { 
+  Button,
+  Input,
+  Text,
+  Title2,
+  Title3,
+  Body1,
+  Caption1,
+  Card,
+  makeStyles,
+  tokens,
+  Divider
+} from "@fluentui/react-components";
+import { 
+  Dismiss24Regular,
+  Send24Regular,
+  Sparkle24Regular,
+  Bot24Regular,
+  Person24Regular,
+  Lightbulb24Regular,
+  Chat24Regular
+} from "@fluentui/react-icons";
+
+const useStyles = makeStyles({
+  overlay: {
+    position: "fixed",
+    inset: 0,
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    backdropFilter: "blur(8px)",
+    zIndex: 50,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    padding: tokens.spacingHorizontalL,
+  },
+  modal: {
+    backgroundColor: tokens.colorNeutralBackground1,
+    borderRadius: tokens.borderRadiusMedium,
+    width: "100%",
+    maxWidth: "600px",
+    maxHeight: "80vh",
+    overflow: "hidden",
+    border: `1px solid ${tokens.colorNeutralStroke2}`,
+  },
+  header: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+    padding: tokens.spacingHorizontalXL,
+    borderBottom: `1px solid ${tokens.colorNeutralStroke2}`,
+    backgroundColor: tokens.colorNeutralBackground2,
+  },
+  headerInfo: {
+    display: "flex",
+    alignItems: "center",
+    gap: tokens.spacingHorizontalM,
+  },
+  headerIcon: {
+    width: "40px",
+    height: "40px",
+    backgroundColor: tokens.colorBrandBackground,
+    borderRadius: tokens.borderRadiusMedium,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    color: tokens.colorNeutralForegroundInverted,
+  },
+  conversation: {
+    flex: 1,
+    overflowY: "auto",
+    padding: tokens.spacingHorizontalXL,
+    maxHeight: "400px",
+    display: "flex",
+    flexDirection: "column",
+    gap: tokens.spacingVerticalL,
+  },
+  welcomeContent: {
+    textAlign: "center",
+    padding: tokens.spacingVerticalXXL,
+  },
+  welcomeIcon: {
+    width: "64px",
+    height: "64px",
+    backgroundColor: tokens.colorBrandBackground,
+    borderRadius: tokens.borderRadiusMedium,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    color: tokens.colorNeutralForegroundInverted,
+    margin: "0 auto",
+    marginBottom: tokens.spacingVerticalL,
+  },
+  suggestedPrompts: {
+    display: "flex",
+    flexDirection: "column",
+    gap: tokens.spacingVerticalS,
+    marginTop: tokens.spacingVerticalXL,
+  },
+  promptButton: {
+    textAlign: "left",
+    padding: tokens.spacingHorizontalM,
+    border: `1px solid ${tokens.colorNeutralStroke2}`,
+    borderRadius: tokens.borderRadiusMedium,
+    backgroundColor: tokens.colorNeutralBackground2,
+    cursor: "pointer",
+    "&:hover": {
+      backgroundColor: tokens.colorNeutralBackground3,
+    }
+  },
+  message: {
+    display: "flex",
+    gap: tokens.spacingHorizontalM,
+  },
+  messageUser: {
+    justifyContent: "flex-end",
+  },
+  messageContent: {
+    maxWidth: "80%",
+    padding: tokens.spacingHorizontalL,
+    borderRadius: tokens.borderRadiusMedium,
+  },
+  messageContentUser: {
+    backgroundColor: tokens.colorBrandBackground,
+    color: tokens.colorNeutralForegroundInverted,
+  },
+  messageContentAI: {
+    backgroundColor: tokens.colorNeutralBackground3,
+  },
+  messageAvatar: {
+    width: "32px",
+    height: "32px",
+    borderRadius: "50%",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    flexShrink: 0,
+  },
+  loadingIndicator: {
+    display: "flex",
+    alignItems: "center",
+    gap: tokens.spacingHorizontalS,
+    padding: tokens.spacingHorizontalL,
+    backgroundColor: tokens.colorNeutralBackground3,
+    borderRadius: tokens.borderRadiusMedium,
+    maxWidth: "80%",
+  },
+  loadingDots: {
+    display: "flex",
+    gap: tokens.spacingHorizontalXS,
+  },
+  loadingDot: {
+    width: "8px",
+    height: "8px",
+    backgroundColor: tokens.colorBrandBackground,
+    borderRadius: "50%",
+    animation: "bounce 1.4s ease-in-out infinite both",
+    "&:nth-child(1)": { animationDelay: "-0.32s" },
+    "&:nth-child(2)": { animationDelay: "-0.16s" },
+  },
+  inputArea: {
+    padding: tokens.spacingHorizontalXL,
+    borderTop: `1px solid ${tokens.colorNeutralStroke2}`,
+  },
+  inputContainer: {
+    display: "flex",
+    gap: tokens.spacingHorizontalM,
+    alignItems: "flex-end",
+  },
+  inputWrapper: {
+    flex: 1,
+    position: "relative",
+  },
+  inputIcon: {
+    position: "absolute",
+    right: tokens.spacingHorizontalM,
+    top: "50%",
+    transform: "translateY(-50%)",
+    color: tokens.colorNeutralForeground3,
+  }
+});
 
 const suggestedPrompts = [
   "Take the names from my Excel contact list and create a Word document with them in bullet points",
@@ -11,6 +190,7 @@ const suggestedPrompts = [
 ];
 
 function AIPrompt({ onClose }) {
+  const styles = useStyles();
   const [prompt, setPrompt] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [conversation, setConversation] = useState([]);
@@ -52,80 +232,63 @@ This is a powerful feature that would require proper authentication and permissi
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+      className={styles.overlay}
       onClick={onClose}
     >
       <motion.div
         initial={{ scale: 0.9, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         exit={{ scale: 0.9, opacity: 0 }}
-        className="bg-white rounded-sm shadow-depth-64 w-full max-w-2xl max-h-[80vh] overflow-hidden"
-        style={{ border: `1px solid var(--ms-gray-40)` }}
+        className={styles.modal}
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex items-center justify-between p-6" style={{ 
-          borderBottom: `1px solid var(--ms-gray-30)`,
-          backgroundColor: 'var(--ms-gray-10)'
-        }}>
-          <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 rounded-sm flex items-center justify-center" style={{ backgroundColor: 'var(--ms-purple)' }}>
-              <Zap className="text-white" size={20} />
+        <div className={styles.header}>
+          <div className={styles.headerInfo}>
+            <div className={styles.headerIcon}>
+              <Sparkle24Regular />
             </div>
             <div>
-              <h2 className="ms-font-xl font-semibold" style={{ color: 'var(--ms-gray-130)' }}>
-                AI Assistant
-              </h2>
-              <p className="ms-font-sm" style={{ color: 'var(--ms-gray-80)' }}>
-                Cross-app commands and automation
-              </p>
+              <Title2>AI Assistant</Title2>
+              <Caption1>Cross-app commands and automation</Caption1>
             </div>
           </div>
-          <motion.button
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
+          <Button
+            appearance="subtle"
+            icon={<Dismiss24Regular />}
             onClick={onClose}
-            className="p-2 rounded-sm hover:bg-white/50 transition-colors"
-          >
-            <X size={20} style={{ color: 'var(--ms-gray-80)' }} />
-          </motion.button>
+          />
         </div>
 
         {/* Conversation Area */}
-        <div className="flex-1 overflow-y-auto p-6 space-y-4 max-h-96">
+        <div className={styles.conversation}>
           {conversation.length === 0 ? (
-            <div className="text-center py-8">
-              <div className="w-16 h-16 mx-auto mb-4 rounded-sm flex items-center justify-center" style={{ backgroundColor: 'var(--ms-purple)' }}>
-                <Sparkles className="text-white" size={32} />
+            <div className={styles.welcomeContent}>
+              <div className={styles.welcomeIcon}>
+                <Sparkle24Regular fontSize="32px" />
               </div>
-              <h3 className="ms-font-lg font-semibold mb-2" style={{ color: 'var(--ms-gray-130)' }}>
+              <Title3 style={{ marginBottom: tokens.spacingVerticalS }}>
                 Welcome to your AI Assistant
-              </h3>
-              <p className="ms-font-sm mb-6" style={{ color: 'var(--ms-gray-80)' }}>
+              </Title3>
+              <Body1 style={{ marginBottom: tokens.spacingVerticalXL }}>
                 I can help you perform actions across your Microsoft 365 apps. Try one of the suggestions below or type your own command.
-              </p>
+              </Body1>
               
               {/* Suggested Prompts */}
-              <div className="space-y-2">
-                <h4 className="ms-font-sm font-medium mb-3 flex items-center justify-center" style={{ color: 'var(--ms-gray-110)' }}>
-                  <Lightbulb size={16} className="mr-2" style={{ color: 'var(--ms-orange)' }} />
-                  Suggested Commands
-                </h4>
+              <div style={{ display: "flex", alignItems: "center", gap: tokens.spacingHorizontalS, marginBottom: tokens.spacingVerticalM }}>
+                <Lightbulb24Regular color={tokens.colorPaletteOrangeForeground1} />
+                <Text weight="semibold">Suggested Commands</Text>
+              </div>
+              <div className={styles.suggestedPrompts}>
                 {suggestedPrompts.slice(0, 3).map((suggestion, index) => (
-                  <motion.button
+                  <Button
                     key={index}
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
+                    appearance="subtle"
+                    className={styles.promptButton}
                     onClick={() => handleSuggestedPrompt(suggestion)}
-                    className="block w-full text-left p-3 rounded-sm ms-font-sm transition-colors border"
-                    style={{ 
-                      backgroundColor: 'var(--ms-gray-10)',
-                      borderColor: 'var(--ms-gray-30)',
-                      color: 'var(--ms-gray-110)'
-                    }}
                   >
-                    "{suggestion}"
-                  </motion.button>
+                    <Caption1>"{suggestion}"</Caption1>
+                  </Button>
                 ))}
               </div>
             </div>
@@ -135,33 +298,29 @@ This is a powerful feature that would require proper authentication and permissi
                 key={index}
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className={`flex ${message.type === "user" ? "justify-end" : "justify-start"}`}
+                className={`${styles.message} ${message.type === "user" ? styles.messageUser : ""}`}
               >
-                <div className={`max-w-[80%] p-4 rounded-sm ${
-                  message.type === "user"
-                    ? "text-white"
-                    : ""
-                }`}
-                style={{
-                  backgroundColor: message.type === "user" ? 'var(--ms-blue)' : 'var(--ms-gray-20)',
-                  color: message.type === "user" ? 'white' : 'var(--ms-gray-130)'
-                }}>
-                  <div className="flex items-start space-x-2">
-                    {message.type === "ai" && (
-                      <Bot size={16} className="mt-1 flex-shrink-0" style={{ color: 'var(--ms-purple)' }} />
-                    )}
-                    {message.type === "user" && (
-                      <User size={16} className="mt-1 flex-shrink-0 text-blue-100" />
-                    )}
-                    <p className="ms-font-sm whitespace-pre-wrap">{message.content}</p>
+                {message.type === "ai" && (
+                  <div className={styles.messageAvatar} style={{ backgroundColor: tokens.colorBrandBackground }}>
+                    <Bot24Regular color={tokens.colorNeutralForegroundInverted} />
                   </div>
-                  <p className={`ms-font-xs mt-2 ${
-                    message.type === "user" ? "text-blue-100" : ""
-                  }`}
-                  style={{ color: message.type === "user" ? 'rgba(255,255,255,0.7)' : 'var(--ms-gray-70)' }}>
+                )}
+                <div className={`${styles.messageContent} ${
+                  message.type === "user" ? styles.messageContentUser : styles.messageContentAI
+                }`}>
+                  <Body1 style={{ whiteSpace: "pre-wrap" }}>{message.content}</Body1>
+                  <Caption1 style={{ 
+                    marginTop: tokens.spacingVerticalS,
+                    opacity: 0.7
+                  }}>
                     {message.timestamp.toLocaleTimeString()}
-                  </p>
+                  </Caption1>
                 </div>
+                {message.type === "user" && (
+                  <div className={styles.messageAvatar} style={{ backgroundColor: tokens.colorNeutralBackground3 }}>
+                    <Person24Regular />
+                  </div>
+                )}
               </motion.div>
             ))
           )}
@@ -170,52 +329,46 @@ This is a powerful feature that would require proper authentication and permissi
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              className="flex justify-start"
+              className={styles.message}
             >
-              <div className="p-4 rounded-sm" style={{ backgroundColor: 'var(--ms-gray-20)' }}>
-                <div className="flex items-center space-x-2">
-                  <div className="flex space-x-1">
-                    <div className="w-2 h-2 rounded-full animate-bounce" style={{ backgroundColor: 'var(--ms-purple)' }}></div>
-                    <div className="w-2 h-2 rounded-full animate-bounce" style={{ backgroundColor: 'var(--ms-purple)', animationDelay: '0.1s' }}></div>
-                    <div className="w-2 h-2 rounded-full animate-bounce" style={{ backgroundColor: 'var(--ms-purple)', animationDelay: '0.2s' }}></div>
-                  </div>
-                  <span className="ms-font-sm" style={{ color: 'var(--ms-gray-80)' }}>AI is thinking...</span>
+              <div className={styles.messageAvatar} style={{ backgroundColor: tokens.colorBrandBackground }}>
+                <Bot24Regular color={tokens.colorNeutralForegroundInverted} />
+              </div>
+              <div className={styles.loadingIndicator}>
+                <div className={styles.loadingDots}>
+                  <div className={styles.loadingDot}></div>
+                  <div className={styles.loadingDot}></div>
+                  <div className={styles.loadingDot}></div>
                 </div>
+                <Caption1>AI is thinking...</Caption1>
               </div>
             </motion.div>
           )}
         </div>
 
         {/* Input Area */}
-        <div className="p-6" style={{ borderTop: `1px solid var(--ms-gray-30)` }}>
-          <form onSubmit={handleSubmit} className="flex space-x-3">
-            <div className="flex-1 relative">
-              <input
-                type="text"
+        <div className={styles.inputArea}>
+          <form onSubmit={handleSubmit} className={styles.inputContainer}>
+            <div className={styles.inputWrapper}>
+              <Input
                 value={prompt}
-                onChange={(e) => setPrompt(e.target.value)}
+                onChange={(e, data) => setPrompt(data.value)}
                 placeholder="Type your command here... (e.g., 'Take names from Excel and add to Word')"
-                className="w-full px-4 py-3 border rounded-sm focus:outline-none focus:ring-2 ms-font-sm transition-all"
-                style={{ 
-                  borderColor: 'var(--ms-gray-60)',
-                  backgroundColor: 'white',
-                  color: 'var(--ms-gray-110)'
-                }}
                 disabled={isLoading}
+                size="large"
+                style={{ width: "100%" }}
               />
-              <MessageSquare className="absolute right-3 top-1/2 transform -translate-y-1/2" size={18} style={{ color: 'var(--ms-gray-60)' }} />
+              <Chat24Regular className={styles.inputIcon} />
             </div>
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
+            <Button
               type="submit"
+              appearance="primary"
               disabled={!prompt.trim() || isLoading}
-              className="px-6 py-3 rounded-sm ms-font-sm font-medium text-white transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2"
-              style={{ backgroundColor: 'var(--ms-purple)' }}
+              icon={<Send24Regular />}
+              size="large"
             >
-              <Send size={18} />
-              <span>Send</span>
-            </motion.button>
+              Send
+            </Button>
           </form>
         </div>
       </motion.div>
